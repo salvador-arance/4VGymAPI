@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Workspaces\\AD\\4VGymAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B7E088D8-7A44-3275-79FC-27AC6A94D68C}|4VGymAPI.csproj|c:\\workspaces\\ad\\4vgymapi\\controller\\activitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7E088D8-7A44-3275-79FC-27AC6A94D68C}|4VGymAPI.csproj|solutionrelative:controller\\activitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7E088D8-7A44-3275-79FC-27AC6A94D68C}|4VGymAPI.csproj|c:\\workspaces\\ad\\4vgymapi\\controller\\instructorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7E088D8-7A44-3275-79FC-27AC6A94D68C}|4VGymAPI.csproj|solutionrelative:controller\\instructorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InstructorController.cs",
+              "DocumentMoniker": "C:\\Workspaces\\AD\\4VGymAPI\\Controller\\InstructorController.cs",
+              "RelativeDocumentMoniker": "Controller\\InstructorController.cs",
+              "ToolTip": "C:\\Workspaces\\AD\\4VGymAPI\\Controller\\InstructorController.cs",
+              "RelativeToolTip": "Controller\\InstructorController.cs",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAkwFIAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-21T15:42:50.201Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ActivityController.cs",
+              "DocumentMoniker": "C:\\Workspaces\\AD\\4VGymAPI\\Controller\\ActivityController.cs",
+              "RelativeDocumentMoniker": "Controller\\ActivityController.cs",
+              "ToolTip": "C:\\Workspaces\\AD\\4VGymAPI\\Controller\\ActivityController.cs",
+              "RelativeToolTip": "Controller\\ActivityController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-21T11:37:01.637Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

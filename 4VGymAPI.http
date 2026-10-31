@@ -1,0 +1,252 @@
+@_4VGymAPI_HostAddress = http://localhost:5117
+
+### ===================== TIPOS DE ACTIVIDAD =====================
+
+### Listar tipos de actividad (200)
+GET {{_4VGymAPI_HostAddress}}/activity-types
+Accept: application/json
+
+### Crear tipo de actividad (201)
+POST {{_4VGymAPI_HostAddress}}/activity-types
+Content-Type: application/json
+
+{
+  "name": "Zumba",
+  "number-monitors": 3
+}
+
+### Crear tipo de actividad sin número de monitores, se pone 1 (201)
+POST {{_4VGymAPI_HostAddress}}/activity-types
+Content-Type: application/json
+
+{
+  "name": "Yoga"
+}
+
+### Error 4: sin nombre (400)
+POST {{_4VGymAPI_HostAddress}}/activity-types
+Content-Type: application/json
+
+{
+  "name": null
+}
+
+### Error 5: menos de 1 monitor (400)
+POST {{_4VGymAPI_HostAddress}}/activity-types
+Content-Type: application/json
+
+{
+  "name": "Boxeo",
+  "number-monitors": 0
+}
+
+### Error 6: nombre repetido (400)
+POST {{_4VGymAPI_HostAddress}}/activity-types
+Content-Type: application/json
+
+{
+  "name": "pilates",
+  "number-monitors": 1
+}
+
+### ===================== MONITORES =====================
+
+### Listar todos los monitores (200)
+GET {{_4VGymAPI_HostAddress}}/instructors
+Accept: application/json
+
+### Filtrar por inicial (200)
+GET {{_4VGymAPI_HostAddress}}/instructors?first_initial=M
+Accept: application/json
+
+### Filtrar por inicial sin coincidencias, lista vacía (200)
+GET {{_4VGymAPI_HostAddress}}/instructors?first_initial=Z
+Accept: application/json
+
+### Monitor por ID (200)
+GET {{_4VGymAPI_HostAddress}}/instructors/1
+Accept: application/json
+
+### Monitor por ID que no existe (400)
+GET {{_4VGymAPI_HostAddress}}/instructors/999
+Accept: application/json
+
+### Crear monitor (201)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "Laura Sanz",
+  "email": "laura@example.com",
+  "photo_url": "https://example.com/laura.jpg",
+  "phone": "+34600999000"
+}
+
+### Error 11: sin nombre (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "email": "sinnombre@example.com",
+  "photo_url": "https://example.com/x.jpg",
+  "phone": "+34600999001"
+}
+
+### Error 12: sin email (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "Sin Email",
+  "photo_url": "https://example.com/x.jpg",
+  "phone": "+34600999002"
+}
+
+### Error 13: email con formato incorrecto (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "Email Malo",
+  "email": "no-es-un-email",
+  "photo_url": "https://example.com/x.jpg",
+  "phone": "+34600999003"
+}
+
+### Error 14: sin teléfono (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "Sin Telefono",
+  "email": "sintelefono@example.com",
+  "photo_url": "https://example.com/x.jpg"
+}
+
+### Error 15: teléfono con formato incorrecto (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "Telefono Malo",
+  "email": "telmalo@example.com",
+  "photo_url": "https://example.com/x.jpg",
+  "phone": "abc"
+}
+
+### Error 16: foto que no es URL (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "Foto Mala",
+  "email": "fotomala@example.com",
+  "photo_url": "foto.jpg",
+  "phone": "+34600999004"
+}
+
+### Error 17: mismo email y nombre que otro monitor, sin distinguir mayúsculas (400)
+POST {{_4VGymAPI_HostAddress}}/instructors
+Content-Type: application/json
+
+{
+  "name": "ANA GARCÍA",
+  "email": "Ana@Example.com",
+  "photo_url": "https://example.com/ana2.jpg",
+  "phone": "+34600111222"
+}
+
+### ===================== ACTIVIDADES =====================
+
+### Crear actividad, happy path (201)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 10,
+  "instructors_id": [1, 2],
+  "max_participants": 20,
+  "date_start": "2030-10-12T10:00:00",
+  "date_end": "2030-10-12T11:00:00"
+}
+
+### Error 39: los mismos monitores en una actividad que se solapa (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 20,
+  "instructors_id": [2],
+  "max_participants": 10,
+  "date_start": "2030-10-12T10:30:00",
+  "date_end": "2030-10-12T11:30:00"
+}
+
+### Errores 25, 27, 28, 29, 30: DataAnnotations (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "instructors_id": [],
+  "max_participants": 30
+}
+
+### Error 26: lista de monitores nula (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 20,
+  "instructors_id": null,
+  "max_participants": 10,
+  "date_start": "2030-10-13T10:00:00",
+  "date_end": "2030-10-13T11:00:00"
+}
+
+### Errores 34 y 35: no existe el tipo ni los monitores (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 999,
+  "instructors_id": [98, 99],
+  "max_participants": 10,
+  "date_start": "2030-10-13T10:00:00",
+  "date_end": "2030-10-13T11:00:00"
+}
+
+### Errores 36 y 37: fin antes del inicio y fechas en el pasado (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 20,
+  "instructors_id": [3],
+  "max_participants": 10,
+  "date_start": "2020-10-13T11:00:00",
+  "date_end": "2020-10-13T10:00:00"
+}
+
+### Error 38: CrossFit necesita 3 monitores (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 40,
+  "instructors_id": [3, 4],
+  "max_participants": 10,
+  "date_start": "2030-10-14T10:00:00",
+  "date_end": "2030-10-14T11:00:00"
+}
+
+### Error 40: monitores repetidos (400)
+POST {{_4VGymAPI_HostAddress}}/activities
+Content-Type: application/json
+
+{
+  "activity_type_id": 20,
+  "instructors_id": [3, 3],
+  "max_participants": 10,
+  "date_start": "2030-10-15T10:00:00",
+  "date_end": "2030-10-15T11:00:00"
+}
