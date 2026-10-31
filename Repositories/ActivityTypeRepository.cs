@@ -26,8 +26,9 @@ namespace _4VGymAPI.Repositories
 
         public async Task<ActivityType?> GetByName(string name) 
         {
+            string nameToFind = name.ToUpper();
             return await _context.ActivityTypes
-                .SingleOrDefaultAsync(at => String.Equals(name, at.Name, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefaultAsync(at => at.Name.ToUpper() == nameToFind);
         }
 
         /// <summary>

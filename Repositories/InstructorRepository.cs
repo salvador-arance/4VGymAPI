@@ -37,11 +37,11 @@ namespace _4VGymAPI.Repositories
         // Búsqueda por email y nombre, sin distinguir mayúsculas
         public async Task<Instructor?> GetByEmailAndName(string email, string name)
         {
-            string emailToFind = email.Trim();
-            string nameToFind = name.Trim();
+            string emailToFind = email.Trim().ToUpper();
+            string nameToFind = name.Trim().ToUpper();
             return await _context.Instructors.SingleOrDefaultAsync(i =>
-                String.Equals(i.Email, email, StringComparison.OrdinalIgnoreCase) 
-                && String.Equals(i.Name, nameToFind, StringComparison.OrdinalIgnoreCase));
+                i.Email.ToUpper() == emailToFind
+                && i.Name.ToUpper() == nameToFind);
         }
 
         /// <summary>
