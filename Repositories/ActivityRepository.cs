@@ -8,18 +8,20 @@ namespace _4VGymAPI.Repositories
     public class ActivityRepository
     {
         private readonly GymDbContext _context;
+
+        // Inyectamos el DbContext (registrado como Scoped en Program.cs)
         public ActivityRepository(GymDbContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// Valida y guarda una nueva actividad. Las validaciones básicas ya las hacen las DataAnnotations del DTO,
-        /// aquí validamos lo referente a las entidades cruzadas y las reglas de negocio.
+        /// Valida y guarda una nueva actividad. Las validaciones básicas (obligatorios, aforo y fechas) ya las hacen
+        /// las DataAnnotations del DTO; aquí validamos lo referente a las entidades cruzadas y las reglas de negocio.
         /// </summary>
         /// <param name="newActivity">Actividad a guardar (sin ID).</param>
         /// <returns>Tupla con la actividad guardada (o null) y la lista de errores (vacía si todo va bien).</returns>
-        public async Task<(ActivityResponse? activity, List<ErrorResponse>)> Add(ActivityCreateDto newActivity)
+        public async Task<(ActivityResponse? activity, List<ErrorResponse> errors)> Add(ActivityCreateDto newActivity)
         {
             List<ErrorResponse> errors = new List<ErrorResponse>();
             List<int> ids = newActivity.InstructorsId;
@@ -30,6 +32,7 @@ namespace _4VGymAPI.Repositories
             {
                 errors.Add(new ErrorResponse(34, $"El tipo de actividad: {newActivity.ActivityTypeId} no existe"));
             }
+
             // Validación 2: Que existan todos los monitores (los cargamos todos en una sola consulta)
             List<Instructor> instructors = await _context.Instructors
                 .Where(instructor => ids.Contains(instructor.Id))
@@ -43,31 +46,25 @@ namespace _4VGymAPI.Repositories
             {
                 errors.Add(new ErrorResponse(35, $"El instructor: {instructorId} no existe"));
             }
+
             // Validación 3: Que no se repitan monitores en la lista
             if (ids.Distinct().Count() != ids.Count)
             {
                 errors.Add(new ErrorResponse(40, "La lista de monitores tiene monitores repetidos"));
             }
+
             // Validación 4: Número mínimo de monitores según el tipo de actividad
             if (activityType != null && ids.Distinct().Count() < activityType.NumberMonitors)
             {
                 errors.Add(new ErrorResponse(38,
                     $"La actividad {activityType.Name} necesita al menos {activityType.NumberMonitors} monitores"));
             }
-            // Validación 5: Fechas
+
+            // Las fechas (errores 36 y 37) ya las validan [DateGreaterThan] y [FutureDate] en el DTO
             DateTime dateStart = newActivity.DateStart!.Value;
             DateTime dateEnd = newActivity.DateEnd!.Value;
 
-            if (dateEnd <= dateStart)
-            {
-                errors.Add(new ErrorResponse(36, "La fecha de fin tiene que ser posterior a la fecha de inicio"));
-            }
-            if (dateStart <= DateTime.Now)
-            {
-                errors.Add(new ErrorResponse(37, "Las fechas tienen que ser en el futuro"));
-            }
-
-            // Validación 6: Los monitores no pueden estar en otras actividades al mismo tiempo
+            // Validación 5: Los monitores no pueden estar en otras actividades al mismo tiempo
             List<int> busyInstructors = await _context.Activities
                 .Where(activity => activity.DateStart < dateEnd && dateStart < activity.DateEnd)
                 .SelectMany(activity => activity.Instructors)
@@ -85,6 +82,7 @@ namespace _4VGymAPI.Repositories
             {
                 return (null, errors);
             }
+
             // Asignamos los objetos cargados: EF rellena la clave foránea y la tabla intermedia ActivityInstructor
             Activity newEntity = new Activity
             {
@@ -100,17 +98,7 @@ namespace _4VGymAPI.Repositories
             await _context.SaveChangesAsync();
 
             // Devolvemos el modelo de salida con toda la información
-            ActivityResponse response = new ActivityResponse
-            {
-                Id = newEntity.Id,
-                ActivityType = activityType,
-                Instructors = instructors,
-                MaxParticipants = newEntity.MaxParticipants,
-                DateStart = newEntity.DateStart,
-                DateEnd = newEntity.DateEnd
-            };
-
-            return (response, errors);
+            return (ActivityResponse.FromEntity(newEntity), errors);
         }
     }
 }

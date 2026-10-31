@@ -25,5 +25,21 @@ namespace _4VGymAPI.Dtos
 
         [JsonPropertyName("date_end")]
         public DateTime DateEnd { get; set; }
+
+        /// <summary>
+        /// Convierte una entidad Activity (con su tipo y sus monitores ya cargados) en el modelo de salida.
+        /// </summary>
+        public static ActivityResponse FromEntity(Activity activity)
+        {
+            return new ActivityResponse
+            {
+                Id = activity.Id,
+                ActivityType = activity.ActivityType,
+                Instructors = activity.Instructors.ToList(),
+                MaxParticipants = activity.MaxParticipants,
+                DateStart = activity.DateStart,
+                DateEnd = activity.DateEnd
+            };
+        }
     }
 }

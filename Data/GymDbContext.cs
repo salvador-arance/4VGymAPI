@@ -14,5 +14,18 @@ namespace _4VGymAPI.Data
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityType> ActivityTypes { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
+
+        // Configuración con Fluent API (alternativa a las Data Annotations)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Activity>(entity =>
+            {
+                // Relación 1:N: cada actividad tiene UN tipo y cada tipo tiene MUCHAS actividades
+                entity.HasOne(activity => activity.ActivityType).WithMany(activityType => activityType.Activities)
+                    .HasForeignKey(activity => activity.ActivityTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Activities_ActivityTypes");
+            });
+        }
     }
 }

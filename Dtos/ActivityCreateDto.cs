@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using _4VGymAPI.Validations;
 
 namespace _4VGymAPI.Dtos
 {
     /// <summary>
-    /// Modelo de entrada para crear actividades. Las referencias a otros modelos van por ID.
+    /// Modelo de entrada para crear y modificar actividades. Las referencias a otros modelos van por ID.
     /// </summary>
     public class ActivityCreateDto
     {
@@ -25,10 +26,12 @@ namespace _4VGymAPI.Dtos
 
         [JsonPropertyName("date_start")]
         [Required(ErrorMessage = "28|La fecha de inicio es obligatoria.")]
+        [FutureDate(ErrorMessage = "37|Las fechas tienen que ser en el futuro")]
         public DateTime? DateStart { get; set; }
 
         [JsonPropertyName("date_end")]
         [Required(ErrorMessage = "29|La fecha de fin es obligatoria.")]
+        [DateGreaterThan(nameof(DateStart), ErrorMessage = "36|La fecha de fin tiene que ser posterior a la fecha de inicio")]
         public DateTime? DateEnd { get; set; }
     }
 }
