@@ -1,4 +1,5 @@
-﻿using _4VGymAPI.Models;
+﻿using _4VGymAPI.Dtos;
+using _4VGymAPI.Models;
 using _4VGymAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 

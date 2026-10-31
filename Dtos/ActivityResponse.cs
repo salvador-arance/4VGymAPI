@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
+using _4VGymAPI.Models;
 
-namespace _4VGymAPI.Models
+namespace _4VGymAPI.Dtos
 {
     /// <summary>
     /// Modelo de salida de una actividad, con los objetos completos en vez de los IDs.
@@ -8,7 +9,7 @@ namespace _4VGymAPI.Models
     public class ActivityResponse
     {
         [JsonPropertyName("id")]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         [JsonPropertyName("activity_type")]
         public ActivityType? ActivityType { get; set; }

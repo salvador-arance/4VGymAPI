@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace _4VGymAPI.Models
+namespace _4VGymAPI.Dtos
 {
     /// <summary>
     /// Modelo de entrada para crear un monitor. No hay ID porque lo genera el repositorio.
