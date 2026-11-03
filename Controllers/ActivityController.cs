@@ -1,5 +1,4 @@
 ﻿using _4VGymAPI.Dtos;
-using _4VGymAPI.Models;
 using _4VGymAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +8,10 @@ namespace _4VGymAPI.Controllers
     [Route("activities")]
     public class ActivityController : ControllerBase
     {
-        private readonly InMemoryActivityRepository _repository;
+        private readonly ActivityRepository _repository;
 
         // Inyectamos la clase concreta del repositorio
-        public ActivityController(InMemoryActivityRepository repository)
+        public ActivityController(ActivityRepository repository)
         {
             _repository = repository;
         }
@@ -21,15 +20,15 @@ namespace _4VGymAPI.Controllers
         /// POST /activities
         /// Añade una nueva actividad en 4VGym.
         /// </summary>
-        /// <param name="activity">Objeto Activity enviado en el cuerpo de la petición (JSON).</param>
+        /// <param name="activity">Objeto ActivityCreateDto enviado en el cuerpo de la petición (JSON).</param>
         [HttpPost]
         [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(List<ErrorResponse>), StatusCodes.Status400BadRequest)]
-        public ActionResult<ActivityResponse> CreateActivity([FromBody] Activity activity)
+        public async Task<ActionResult<ActivityResponse>> CreateActivity([FromBody] ActivityCreateDto activity)
         {
             try
             {
-                Activity? activityCreated = _repository.Add(activity, out List<ErrorResponse> errors);
+                var (activityCreated, errors) = await _repository.Add(activity);
 
                 // En caso de errores de validacion del repositorio
                 if (activityCreated == null && errors.Count > 0)
@@ -38,7 +37,7 @@ namespace _4VGymAPI.Controllers
                 }
 
                 // En caso de OK devolvemos el modelo de salida con toda la información
-                return StatusCode(StatusCodes.Status201Created, _repository.ToResponse(activityCreated!));
+                return StatusCode(StatusCodes.Status201Created, activityCreated);
             }
             catch (Exception)
             {

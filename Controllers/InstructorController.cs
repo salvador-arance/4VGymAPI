@@ -1,4 +1,5 @@
-﻿using _4VGymAPI.Models;
+﻿using _4VGymAPI.Dtos;
+using _4VGymAPI.Models;
 using _4VGymAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,10 @@ namespace _4VGymAPI.Controllers
     [Route("instructors")]
     public class InstructorController : ControllerBase
     {
-        private readonly InMemoryInstructorRepository _repository;
+        private readonly InstructorRepository _repository;
 
         // Inyectamos la clase concreta del repositorio
-        public InstructorController(InMemoryInstructorRepository repository)
+        public InstructorController(InstructorRepository repository)
         {
             _repository = repository;
         }
@@ -25,11 +26,11 @@ namespace _4VGymAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Instructor>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<IEnumerable<Instructor>> FindInstructors([FromQuery(Name = "first_initial")] string? firstInitial)
+        public async Task<ActionResult<IEnumerable<Instructor>>> FindInstructors([FromQuery(Name = "first_initial")] string? firstInitial)
         {
             try
             {
-                IEnumerable<Instructor> instructors = _repository.GetByFirstInitial(firstInitial);
+                List<Instructor> instructors = await _repository.GetByFirstInitial(firstInitial);
                 return Ok(instructors);
             }
             catch (Exception)
@@ -43,14 +44,14 @@ namespace _4VGymAPI.Controllers
         /// Devuelve todos los datos de un monitor dado su identificador.
         /// </summary>
         /// <param name="id">Identificador del monitor</param>
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] // El id forma parte de la ruta: /instructors/3
         [ProducesResponseType(typeof(Instructor), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Instructor> FindInstructorById([FromRoute] long id)
+        public async Task<ActionResult<Instructor>> FindInstructorById(int id)
         {
             try
             {
-                Instructor? instructor = _repository.GetById(id);
+                Instructor? instructor = await _repository.GetById(id);
 
                 if (instructor == null)
                 {
@@ -73,12 +74,12 @@ namespace _4VGymAPI.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Instructor), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Instructor> CreateInstructor([FromBody] NewInstructor newInstructor)
+        public async Task<ActionResult<Instructor>> CreateInstructor([FromBody] NewInstructor newInstructor)
         {
             try
             {
                 // No hacemos validaciones de Controlador, todas son de repositorio
-                Instructor? createdInstructor = _repository.Add(newInstructor, out ErrorResponse? errorResponse);
+                var (createdInstructor, errorResponse) = await _repository.Add(newInstructor);
 
                 // Primero controlo el error
                 if (errorResponse != null)
