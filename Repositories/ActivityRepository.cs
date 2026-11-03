@@ -26,14 +26,12 @@ namespace _4VGymAPI.Repositories
             List<ErrorResponse> errors = new List<ErrorResponse>();
             List<int> ids = newActivity.InstructorsId;
 
-            // Validación 1: Que exista el tipo de actividad
             ActivityType? activityType = await _context.ActivityTypes.FindAsync(newActivity.ActivityTypeId!.Value);
             if (activityType == null)
             {
                 errors.Add(new ErrorResponse(34, $"El tipo de actividad: {newActivity.ActivityTypeId} no existe"));
             }
 
-            // Validación 2: Que existan todos los monitores (los cargamos todos en una sola consulta)
             List<Instructor> instructors = await _context.Instructors
                 .Where(instructor => ids.Contains(instructor.Id))
                 .ToListAsync();
@@ -47,20 +45,17 @@ namespace _4VGymAPI.Repositories
                 errors.Add(new ErrorResponse(35, $"El instructor: {instructorId} no existe"));
             }
 
-            // Validación 3: Que no se repitan monitores en la lista
             if (ids.Distinct().Count() != ids.Count)
             {
                 errors.Add(new ErrorResponse(40, "La lista de monitores tiene monitores repetidos"));
             }
 
-            // Validación 4: Número mínimo de monitores según el tipo de actividad
             if (activityType != null && ids.Distinct().Count() < activityType.NumberMonitors)
             {
                 errors.Add(new ErrorResponse(38,
                     $"La actividad {activityType.Name} necesita al menos {activityType.NumberMonitors} monitores"));
             }
 
-            // Las fechas (errores 36 y 37) ya las validan [DateGreaterThan] y [FutureDate] en el DTO
             DateTime dateStart = newActivity.DateStart!.Value;
             DateTime dateEnd = newActivity.DateEnd!.Value;
 
@@ -83,7 +78,6 @@ namespace _4VGymAPI.Repositories
                 return (null, errors);
             }
 
-            // Asignamos los objetos cargados: EF rellena la clave foránea y la tabla intermedia ActivityInstructor
             Activity newEntity = new Activity
             {
                 ActivityType = activityType,
@@ -93,11 +87,9 @@ namespace _4VGymAPI.Repositories
                 DateEnd = dateEnd
             };
 
-            // Añadimos al contexto y guardamos en la BBDD
             _context.Activities.Add(newEntity);
             await _context.SaveChangesAsync();
 
-            // Devolvemos el modelo de salida con toda la información
             return (ActivityResponse.FromEntity(newEntity), errors);
         }
     }
