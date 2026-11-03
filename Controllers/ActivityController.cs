@@ -41,7 +41,7 @@ namespace _4VGymAPI.Controllers
             }
             catch (Exception)
             {
-                return tatusCode(StatusCodes.Status500InternalServerError,
+                return StatusCode(StatusCodes.Status500InternalServerError,
                                   new ErrorResponse(1, "An internal server error occurred"));
             }
         }
